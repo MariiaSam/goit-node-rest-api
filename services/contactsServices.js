@@ -1,9 +1,9 @@
 import fs from "fs/promises";
 import path from "path";
 import { nanoid } from "nanoid";
+import { json } from "stream/consumers";
 
 const contactsPath = path.join("db", "contacts.json");
-// const contactsPath = path.join('_dirname', 'contacts.json');
 
 export async function listContacts() {
   const data = await fs.readFile(contactsPath);
@@ -39,4 +39,15 @@ export async function addContact(name, email, phone) {
   contacts.push(newContact);
   await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
   return newContact;
+}
+
+export async function updateContact (id, body) {
+  const contacts = await listContacts()
+  const idx = contacts.findIndex((contact) => contact.id === contactId);
+  if (idx === -1) {
+    return null;
+  }
+ contacts[idx] = { ...contacts[idx], ...body}
+ await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+ return contacts[idx]
 }
