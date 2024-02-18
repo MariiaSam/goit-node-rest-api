@@ -3,7 +3,7 @@ import {
   getContactById,
   removeContact,
   addContact,
-  updateContact,
+  updateContacts,
 } from "../services/contactsServices.js";
 import HttpError from "../helpers/HttpError.js";
 
@@ -44,7 +44,8 @@ export const deleteContact = async (req, res, next) => {
 
 export const createContact = async (req, res, next) => {
   try {
-    const result = await addContact(req.body);
+    const { name, email, phone} = req.body
+    const result = await addContact({ name, email, phone });
     res.status(201).json(result);
   } catch (error) {
     next(error);
@@ -57,7 +58,7 @@ export const updateContact = async (req, res, next) => {
       throw HttpError(400, "Body must have at least one field");
     }
     const { id } = req.params;
-    const result = await updateContact(id, req.body);
+    const result = await updateContacts(id, req.body);
 
     if (!result) {
       throw HttpError(404);

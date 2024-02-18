@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 import { nanoid } from "nanoid";
-import { json } from "stream/consumers";
+// import { json } from "stream/consumers";
 
 const contactsPath = path.join("db", "contacts.json");
 
@@ -27,7 +27,8 @@ export async function removeContact(contactId) {
   return result;
 }
 
-export async function addContact(name, email, phone) {
+export async function addContact(contactData) {
+  const { name, email, phone } = contactData;
   const contacts = await listContacts();
   const newContact = {
     id: nanoid(),
@@ -41,7 +42,7 @@ export async function addContact(name, email, phone) {
   return newContact;
 }
 
-export async function updateContact (id, body) {
+export async function updateContacts (contactId, body) {
   const contacts = await listContacts()
   const idx = contacts.findIndex((contact) => contact.id === contactId);
   if (idx === -1) {
