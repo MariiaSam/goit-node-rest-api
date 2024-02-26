@@ -1,15 +1,16 @@
 import express from "express";
-import {
-  getAllContacts,
-  getOneContact,
-  deleteContact,
-  createContact,
-  updateFavorite,
-  updateContact,
-} from "../controllers/contactsControllers.js";
+import contactsControllers from '../controllers/contactsControllers.js'
 import { middlewares } from "../middleware/index.js";
 import { schemas } from "../models/contact.js";
 
+const {
+  getAllContacts,
+  getOneContact,
+  createContact,
+  updateContact,
+  updateFavorite,
+  deleteContact
+} = contactsControllers
 
 const contactsRouter = express.Router();
 

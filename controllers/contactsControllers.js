@@ -1,39 +1,41 @@
 import { Contact } from "../models/contact.js";
 import wrapper from "../helpers/wrapper.js";
 import HttpError from "../helpers/HttpError.js";
+import exp from "constants";
 
-export const getAllContacts = wrapper(async (req, res) => {
-  const allContacts = await Contact.find();
-  res.json(allContacts);
-});
+const getAllContacts = async (_, res) => {
+  const resultAllContacts = await Contact.find();
+  res.json(resultAllContacts);
+};
 
-export const getOneContact =  wrapper (async (req, res) => {
+const getOneContact =  async (req, res) => {
   const { id } = req.params;
-  const contactById = await Contact.findById(id);
-  if (!contactById) {
+  const resultContactById = await Contact.findById(id);
+
+  if (!resultContactById) {
     throw HttpError(404, "Not found");
   }
-  res.json(contactById);
-});
+  res.json(resultContactById);
+};
 
-export const createContact = wrapper (async (req, res) => {
-  const newContact = await Contact.create(req.body);
-  res.status(201).json(newContact);
-});
+const createContact = async (req, res) => {
+  const resultNewContact = await Contact.create(req.body);
+  res.status(201).json(resultNewContact);
+};
 
-export const updateContact = wrapper (async (req, res) => {
+const updateContact = async (req, res) => {
   const { id } = req.params;
   const resultUpdate = await Contact.findByIdAndUpdate(id, req.body, {
     new: true,
   });
 
-  if (!result) {
-    throw HttpError(404, "Not Found");
+  if (!resultUpdate) {
+    throw HttpError(404, "Not found");
   }
   res.json(resultUpdate);
-});
+};
 
-export const updateFavorite = wrapper(async (req, res) => {
+const updateFavorite = async (req, res) => {
   const { id } = req.params;
   const resultFavorite = await Contact.findByIdAndUpdate(id, req.body, {
     new: true,
@@ -42,15 +44,24 @@ export const updateFavorite = wrapper(async (req, res) => {
   if (!resultFavorite) {
     throw HttpError(404, "Not found");
   }
-  res.status(200).json(resultFavorite);
-});
+  res.json(resultFavorite);
+};
 
-export const deleteContact = wrapper (async (req, res) => {
+const deleteContact = async (req, res) => {
   const { id } = req.params;
   const resultDelete = await Contact.findByIdAndDelete(id);
 
-  if (!result) {
+  if (!resultDelete) {
     throw HttpError(404, "Not found");
   }
   res.json(resultDelete);
-});
+};
+
+export default {
+  getAllContacts: wrapper(getAllContacts),
+  getOneContact: wrapper(getOneContact),
+  createContact: wrapper(createContact),
+  updateContact: wrapper(updateContact),
+  updateFavorite: wrapper(updateFavorite),
+  deleteContact: wrapper(deleteContact)
+}

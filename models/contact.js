@@ -1,12 +1,13 @@
 import { Schema, model } from "mongoose";
 import Joi from "joi";
+
 import { middlewares } from "../middleware/index.js";
 
 const contactSchema = new Schema(
   {
     name: {
       type: String,
-      required: true,
+      required: [true, "Set name for contact"],
     },
     email: {
       type: String,
@@ -26,27 +27,28 @@ contactSchema.post("save", middlewares.mongooseError);
 
 export const Contact = model("contact", contactSchema);
 
- const createContactSchema = Joi.object({
-  name: Joi.string().min(3).max(20).required().messages({ "any.required": "Missing required name field" }),
-  email: Joi.string().email().required().messages({ "any.required": "Missing required name field" }),
-  phone: Joi.string().required().messages({ "any.required": "Missing required name field" }),
+const createContactSchema = Joi.object({
+  name: Joi.string().min(3).max(20).required(),
+  email: Joi.string().email().required(),
+  phone: Joi.string().required(),
   favorite: Joi.boolean(),
 });
 
- const updateContactSchema = Joi.object({
+const updateContactSchema = Joi.object({
   name: Joi.string(),
-  email: Joi.string(),
+  email: Joi.string().email(),
   phone: Joi.string(),
+  favorite: Joi.boolean(),
 });
 
- const updateFavoriteSchema = Joi.object({
+const updateFavoriteSchema = Joi.object({
   favorite: Joi.boolean().required().messages({
     "any.required": "Missing required favorite field",
   }),
 });
 
 export const schemas = {
-    createContactSchema,
-    updateContactSchema,
-    updateFavoriteSchema
-}
+  createContactSchema,
+  updateContactSchema,
+  updateFavoriteSchema,
+};
