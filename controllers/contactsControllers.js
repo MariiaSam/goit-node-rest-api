@@ -1,7 +1,6 @@
 import { Contact } from "../models/contact.js";
 import wrapper from "../helpers/wrapper.js";
 import HttpError from "../helpers/HttpError.js";
-import exp from "constants";
 
 const getAllContacts = async (_, res) => {
   const resultAllContacts = await Contact.find();
