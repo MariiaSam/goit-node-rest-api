@@ -27,7 +27,7 @@ const registerUser = async (req, res) => {
   res.status(201).json({
     user: {
       email: userEmail,
-      subscription,
+      subscription ,
     },
   });
 };
@@ -36,11 +36,13 @@ const login = async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
+
   if (!user) {
     throw HttpError(401, "Email or password invalid");
   }
 
   const passwordCompare = await bcrypt.compare(password, user.password);
+  
   if (!passwordCompare) {
     throw HttpError(401, "Email or password invalid");
   }
@@ -59,7 +61,7 @@ const login = async (req, res) => {
 };
 
 const getCurrent = async(req, res)=> {
-    const { email, subscription} = req.user;
+    const { email, subscription } = req.user;
 
     res.json({
         email,
