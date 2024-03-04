@@ -6,7 +6,7 @@ import {
   updateSubscriptionSchema,
 } from "../models/user.js";
 
-import { middlewares } from "../middleware/index.js";
+import { validateBody, authenticate } from "../middleware/index.js";
 
 import userControllers from "../controllers/userControllers.js";
 
@@ -17,20 +17,20 @@ const userRouter = express.Router();
 
 userRouter.post(
   "/register",
-  middlewares.validateBody(registerSchema),
+  validateBody(registerSchema),
   registerUser
 );
 
-userRouter.post("/login", middlewares.validateBody(loginSchema), login);
+userRouter.post("/login", validateBody(loginSchema), login);
 
-userRouter.get("/current", middlewares.authenticate, getCurrent);
+userRouter.get("/current", authenticate, getCurrent);
 
-userRouter.post("/logout", middlewares.authenticate, logout);
+userRouter.post("/logout", authenticate, logout);
 
 userRouter.patch(
   "/",
-  middlewares.authenticate,
-  middlewares.validateBody(updateSubscriptionSchema),
+  authenticate,
+  validateBody(updateSubscriptionSchema),
   updateSubscription
 );
 

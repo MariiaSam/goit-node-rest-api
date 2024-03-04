@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 import Joi from "joi";
 
-import { middlewares } from "../middleware/index.js";
+import { mongooseError } from "../middleware/index.js";
 
 const userSchema = new Schema(
   {
@@ -27,7 +27,7 @@ const userSchema = new Schema(
   { versionKey: false, timestamps: true }
 );
 
-// userSchema.post("save", middlewares.mongooseError);
+userSchema.post("save", mongooseError);
 
 export const registerSchema = Joi.object({
   password: Joi.string().min(6).required(),

@@ -2,7 +2,7 @@
 import { Schema, model } from "mongoose";
 import Joi from "joi";
 
-import { middlewares } from "../middleware/index.js";
+import { mongooseError } from "../middleware/index.js";
 
 const contactSchema = new Schema(
   {
@@ -30,7 +30,7 @@ const contactSchema = new Schema(
   { versionKey: false, timestamps: true }
 );
 
-contactSchema.post("save", middlewares.mongooseError);
+contactSchema.post("save", mongooseError);
 
 
 const createContactSchema = Joi.object({
