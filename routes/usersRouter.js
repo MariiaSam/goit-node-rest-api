@@ -8,30 +8,26 @@ import {
 
 import { validateBody, authenticate } from "../middleware/index.js";
 
-import userControllers from "../controllers/userControllers.js";
+import authControllers from "../controllers/authContollers.js";
 
 const { registerUser, login, logout, getCurrent, updateSubscription } =
-  userControllers;
+  authControllers;
 
-const userRouter = express.Router();
+const usersRouter = express.Router();
 
-userRouter.post(
-  "/register",
-  validateBody(registerSchema),
-  registerUser
-);
+usersRouter.post("/register", validateBody(registerSchema), registerUser);
 
-userRouter.post("/login", validateBody(loginSchema), login);
+usersRouter.post("/login", validateBody(loginSchema), login);
 
-userRouter.get("/current", authenticate, getCurrent);
+usersRouter.get("/current", authenticate, getCurrent);
 
-userRouter.post("/logout", authenticate, logout);
+usersRouter.post("/logout", authenticate, logout);
 
-userRouter.patch(
+usersRouter.patch(
   "/",
   authenticate,
   validateBody(updateSubscriptionSchema),
   updateSubscription
 );
 
-export default authRouter;
+export default usersRouter;
