@@ -27,7 +27,7 @@ const userSchema = new Schema(
   { versionKey: false, timestamps: true }
 );
 
-userSchema.post("save", middlewares.mongooseError);
+// userSchema.post("save", middlewares.mongooseError);
 
 export const registerSchema = Joi.object({
   password: Joi.string().min(6).required(),
