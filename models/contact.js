@@ -20,13 +20,18 @@ const contactSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+      required: true
+  }
+
   },
   { versionKey: false, timestamps: true }
 );
 
 contactSchema.post("save", middlewares.mongooseError);
 
-export const Contact = model("contact", contactSchema);
 
 const createContactSchema = Joi.object({
   name: Joi.string().min(3).max(20).required(),
@@ -53,3 +58,5 @@ export const schemas = {
   updateContactSchema,
   updateFavoriteSchema,
 };
+
+export const Contact = model("contact", contactSchema);
