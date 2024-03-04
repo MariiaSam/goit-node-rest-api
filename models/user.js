@@ -58,5 +58,5 @@ export const updateSubscriptionSchema = Joi.object({
 });
 
 
-const User = model("user", userSchema);
+export const User = model("user", userSchema);
 
