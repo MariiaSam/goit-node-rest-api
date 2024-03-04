@@ -1,6 +1,5 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import fs from "fs/promises";
 
 import HttpError from "../helpers/HttpError.js";
 import wrapper from "../helpers/wrapper.js";

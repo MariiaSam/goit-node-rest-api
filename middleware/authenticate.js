@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 
 import { User } from "../models/user.js";
 import HttpError from "../helpers/HttpError.js";
-import exp from "constants";
 
 dotenv.config();
 
