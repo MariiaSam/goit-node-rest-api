@@ -77,8 +77,7 @@ const updateSubscription = async (req, res) => {
       _id,
       {
         subscription,
-      },
-      { new: true }
+      }
     );
     res.json(updatedUserSubscription);
   };
