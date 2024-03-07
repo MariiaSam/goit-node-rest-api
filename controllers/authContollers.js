@@ -1,9 +1,9 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 
 import HttpError from "../helpers/HttpError.js";
 import wrapper from "../helpers/wrapper.js";
-import dotenv from "dotenv";
 
 import { User } from "../models/user.js";
 
@@ -87,9 +87,8 @@ const logout = async (req, res) => {
   const { _id } = req.user;
   await User.findByIdAndUpdate(_id, { token: "" });
 
-  res.status(204).res.json({
-    message: "Logout success",
-  });
+  res.status(204).json
+  ({message: "Logout success"})
 };
 
 
