@@ -20,7 +20,7 @@ contactsRouter.get("/:id", authenticate, isValidId, getOneContact);
 
 contactsRouter.delete("/:id", authenticate, isValidId, deleteContact);
 
-contactsRouter.post("/", authenticate, isValidId,  validateBody(schemas.createContactSchema), createContact);
+contactsRouter.post("/", authenticate, validateBody(schemas.createContactSchema), createContact);
 
 contactsRouter.patch("/:id/favorite", authenticate, isValidId, validateBody(schemas.updateFavoriteSchema), updateFavorite);
 
