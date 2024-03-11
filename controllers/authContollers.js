@@ -15,7 +15,7 @@ import { User } from "../models/user.js";
 dotenv.config();
 
 const { SECRET_KEY } = process.env;
-const avatarsDir = path.resolve("public", 'avatars');
+const avatarsDir = path.resolve("public", "avatars");
 
 const registerUser = async (req, res) => {
   const { email, password } = req.body;
@@ -107,16 +107,19 @@ const updateAvatar = async (req, res) => {
   }
 
   const { path: tempUpload, originalname } = req.file;
+
+  const filename = `${_id}_${originalname}`;
   const resultUpload = path.resolve(avatarsDir, filename);
+  
   const image = await Jimp.read(tempUpload);
   image.resize(250, 250).write(tempUpload);
 
-  await fs.rename(tempUpload, resultUpload)
+  await fs.rename(tempUpload, resultUpload);
 
-  const avatarUrl = path.resolve('avatars', filename)
-  await User.findByIdAndUpdate(_id, { avatarURL })
+  const avatarURL = path.resolve("avatars", filename);
+  await User.findByIdAndUpdate(_id, { avatarURL });
 
-  res.json({ avatarUrl })
+  res.json({ avatarURL });
 };
 
 export default {
