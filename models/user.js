@@ -23,6 +23,10 @@ const userSchema = new Schema(
       type: String,
       default: "",
     },
+    avatarURL: {
+      type: String,
+      required: [true, "Avatar is required"],
+    },
   },
   { versionKey: false, timestamps: true }
 );
@@ -56,6 +60,5 @@ export const updateSubscriptionSchema = Joi.object({
       "any.only": "Subscription has only 3 values: starter, pro, business",
     }),
 });
-
 
 export const User = model("user", userSchema);
