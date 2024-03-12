@@ -26,12 +26,12 @@ const registerUser = async (req, res) => {
   }
 
   const hashPassword = await bcrypt.hash(password, 10);
-  const avatarUrl = gravatar.url(email);
+  const avatarURL = gravatar.url(email);
 
   const newUser = await User.create({
     ...req.body,
     password: hashPassword,
-    avatarUrl,
+    avatarURL,
   });
   const { email: userEmail, subscription } = newUser;
 
@@ -111,7 +111,7 @@ const updateAvatar = async (req, res) => {
   const filename = `${_id}_${originalname}`;
   const resultUpload = path.resolve(avatarsDir, filename);
   
-  const image = await Jimp.read(tempUpload);
+  const image = await Jimp.read(tempUpload);  
   image.resize(250, 250).write(tempUpload);
 
   await fs.rename(tempUpload, resultUpload);
@@ -121,7 +121,7 @@ const updateAvatar = async (req, res) => {
 
   res.json({ avatarURL });
 };
-
+  
 export default {
   registerUser: wrapper(registerUser),
   login: wrapper(login),
