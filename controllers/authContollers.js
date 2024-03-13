@@ -105,6 +105,10 @@ const updateAvatar = async (req, res) => {
   if (!userUpdateAvatar) {
     throw HttpError(401, "Unauthorized");
   }
+  
+  if (!req.file) {
+    throw HttpError(400, "No file uploaded");
+  }
 
   const { path: tempUpload, originalname } = req.file;
 
