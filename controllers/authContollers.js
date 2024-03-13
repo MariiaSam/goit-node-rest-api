@@ -105,7 +105,7 @@ const updateAvatar = async (req, res) => {
   if (!userUpdateAvatar) {
     throw HttpError(401, "Unauthorized");
   }
-  
+
   if (!req.file) {
     throw HttpError(400, "No file uploaded");
   }
@@ -120,7 +120,8 @@ const updateAvatar = async (req, res) => {
  
   await fs.rename(tempUpload, resultUpload);
 
-  const avatarURL = path.resolve("avatars", filename);
+  const avatarURL = `/avatars/${filename}`;
+
   await User.findByIdAndUpdate(_id, { avatarURL });
 
   res.json({ avatarURL });
