@@ -18,7 +18,7 @@ const usersRouter = express.Router();
 
 usersRouter.post("/register", validateBody(registerSchema), registerUser);
 
-usersRouter.get('/verify:verificationToken', verifyUserEmail);
+usersRouter.get("/verify/:verificationToken", verifyUserEmail);
 
 usersRouter.post("/verify", validateBody(verificationEmailSchema), resendVerifyEmail);
 
