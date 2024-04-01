@@ -35,7 +35,7 @@ const registerUser = async (req, res) => {
     ...req.body,
     password: hashPassword,
     avatarURL,
-    verificationToken
+    verificationToken,
   });
 
   const { email: userEmail, subscription } = newUser;
@@ -43,8 +43,8 @@ const registerUser = async (req, res) => {
   const verifyEmail = {
     to: email,
     subject: "Verify email",
-    html: `<a target="_blank" href="${BASE_URL}/users/verify/${verificationToken}">Click here to verify your email</a>`
-  }
+    html: `<a target="_blank" href="${BASE_URL}/users/verify/${verificationToken}">Click here to verify your email</a>`,
+  };
 
   await sendEmail(verifyEmail);
 
@@ -80,6 +80,7 @@ const resendVerifyEmail = async (req, res) => {
   if (!user) {
     throw HttpError(404, "Email not found");
   }
+
   if (user.verify) {
     res.status(400).json({
       message: "Verification has already been passed",
@@ -91,12 +92,8 @@ const resendVerifyEmail = async (req, res) => {
   const verifyEmail = {
     to: email,
     subject: "Verify email",
-    html: ` <a
-        target="_blank"
-        href="${BASE_URL}/api/users/verify/${verificationToken}"
-      >
-        Click here to verify your email
-      </a>`,
+    html: `<a
+        target="_blank" href="${BASE_URL}/api/users/verify/${verificationToken}">Click here to verify your email</a>`,
   };
 
   await sendEmail(verifyEmail);
@@ -106,102 +103,101 @@ const resendVerifyEmail = async (req, res) => {
   });
 };
 
-  const login = async (req, res) => {
-    const { email, password } = req.body;
+const login = async (req, res) => {
+  const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
+  const user = await User.findOne({ email });
 
-    if (!user) {
-      throw HttpError(401, "Email or password invalid");
-    }
+  if (!user) {
+    throw HttpError(401, "Email or password invalid");
+  }
 
-    if (!user.verify) {
-      throw HttpError(401, "Email isn't verified");
-    }
+  if (!user.verify) {
+    throw HttpError(401, "Email isn't verified");
+  }
 
+  const passwordCompare = await bcrypt.compare(password, user.password);
 
-    const passwordCompare = await bcrypt.compare(password, user.password);
+  if (!passwordCompare) {
+    throw HttpError(401, "Email or password invalid");
+  }
 
-    if (!passwordCompare) {
-      throw HttpError(401, "Email or password invalid");
-    }
-
-    const payload = {
-      id: user._id,
-    };
-
-    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
-    await User.findByIdAndUpdate(user._id, { token });
-
-    res.json({
-      token,
-      user: { email, subscription: user.subscription },
-    });
+  const payload = {
+    id: user._id,
   };
 
-  const getCurrent = async (req, res) => {
-    const { email, subscription } = req.user;
+  const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
+  await User.findByIdAndUpdate(user._id, { token });
 
-    res.json({
-      email,
-      subscription,
-    });
-  };
+  res.json({
+    token,
+    user: { email, subscription: user.subscription },
+  });
+};
 
-  const updateSubscription = async (req, res) => {
-    const { subscription } = req.body;
-    const { _id } = req.user;
+const getCurrent = async (req, res) => {
+  const { email, subscription } = req.user;
 
-    const updatedUserSubscription = await User.findByIdAndUpdate(_id, {
-      subscription,
-    });
-    res.json(updatedUserSubscription);
-  };
+  res.json({
+    email,
+    subscription,
+  });
+};
 
-  const logout = async (req, res) => {
-    const { _id } = req.user;
-    await User.findByIdAndUpdate(_id, { token: "" });
+const updateSubscription = async (req, res) => {
+  const { subscription } = req.body;
+  const { _id } = req.user;
 
-    res.status(204).json({ message: "Logout success" });
-  };
+  const updatedUserSubscription = await User.findByIdAndUpdate(_id, {
+    subscription,
+  });
+  res.json(updatedUserSubscription);
+};
 
-  const updateAvatar = async (req, res) => {
-    const { _id } = req.user;
+const logout = async (req, res) => {
+  const { _id } = req.user;
+  await User.findByIdAndUpdate(_id, { token: "" });
 
-    const userUpdateAvatar = await User.findById(_id);
+  res.status(204).json({ message: "Logout success" });
+};
 
-    if (!userUpdateAvatar) {
-      throw HttpError(401, "Unauthorized");
-    }
+const updateAvatar = async (req, res) => {
+  const { _id } = req.user;
 
-    if (!req.file) {
-      throw HttpError(400, "No file uploaded");
-    }
+  const userUpdateAvatar = await User.findById(_id);
 
-    const { path: tempUpload, originalname } = req.file;
+  if (!userUpdateAvatar) {
+    throw HttpError(401, "Unauthorized");
+  }
 
-    const filename = `${_id}_${originalname}`;
-    const resultUpload = path.resolve(avatarsDir, filename);
+  if (!req.file) {
+    throw HttpError(400, "No file uploaded");
+  }
 
-    const image = await Jimp.read(tempUpload);
-    image.resize(250, 250).write(tempUpload);
+  const { path: tempUpload, originalname } = req.file;
 
-    await fs.rename(tempUpload, resultUpload);
+  const filename = `${_id}_${originalname}`;
+  const resultUpload = path.resolve(avatarsDir, filename);
 
-    const avatarURL = `/avatars/${filename}`;
+  const image = await Jimp.read(tempUpload);
+  image.resize(250, 250).write(tempUpload);
 
-    await User.findByIdAndUpdate(_id, { avatarURL });
+  await fs.rename(tempUpload, resultUpload);
 
-    res.json({ avatarURL });
-  };
+  const avatarURL = `/avatars/${filename}`;
 
-  export default {
-    registerUser: wrapper(registerUser),
-    verifyUserEmail: wrapper(verifyUserEmail),
-    resendVerifyEmail: wrapper(resendVerifyEmail),
-    login: wrapper(login),
-    getCurrent: wrapper(getCurrent),
-    updateSubscription: wrapper(updateSubscription),
-    logout: wrapper(logout),
-    updateAvatar: wrapper(updateAvatar),
-  };
+  await User.findByIdAndUpdate(_id, { avatarURL });
+
+  res.json({ avatarURL });
+};
+
+export default {
+  registerUser: wrapper(registerUser),
+  verifyUserEmail: wrapper(verifyUserEmail),
+  resendVerifyEmail: wrapper(resendVerifyEmail),
+  login: wrapper(login),
+  getCurrent: wrapper(getCurrent),
+  updateSubscription: wrapper(updateSubscription),
+  logout: wrapper(logout),
+  updateAvatar: wrapper(updateAvatar),
+};
