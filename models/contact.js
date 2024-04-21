@@ -29,7 +29,7 @@ const contactSchema = new Schema(
   { versionKey: false, timestamps: true }
 );
 
-contactSchema.post("save", mongooseError); // moongose hook
+contactSchema.post("save", mongooseError); // mongoose hook
 
 
 const createContactSchema = Joi.object({
